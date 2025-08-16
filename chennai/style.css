@@ -2191,6 +2191,7 @@ nav a:hover::after {
   flex: 1 1 400px;
   max-width: 500px;
   padding: 30px;
+    overflow: hidden;
 }
 
 .contactlux-image img {
