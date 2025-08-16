@@ -42,70 +42,54 @@
             setTimeout(type, 600);
           });
 
-          // Services Slider Implementation
           class ServicesSlider {
             constructor() {
               this.slider = document.getElementById("servicesSlider");
               this.prevBtn = document.getElementById("prevBtn");
               this.nextBtn = document.getElementById("nextBtn");
               this.dotsContainer = document.getElementById("sliderDots");
-              this.originalCards = Array.from(
-                this.slider.querySelectorAll(".service-card")
-              );
-              this.currentSlide = 0;
+              this.originalCards = Array.from(this.slider.children);
               this.totalCards = this.originalCards.length;
               this.cardsPerView = this.getCardsPerView();
+              this.currentSlide = this.cardsPerView; // start from first real slide
               this.isTransitioning = false;
-
+          
               this.init();
             }
-
+          
             getCardsPerView() {
-              if (window.innerWidth >= 1024) return 4; // Desktop
-              if (window.innerWidth >= 768) return 3; // Tablet
-              return 2; // Mobile
+              if (window.innerWidth >= 1024) return 4;
+              if (window.innerWidth >= 768) return 3;
+              return 2;
             }
-
+          
             init() {
               this.createInfiniteLoop();
               this.createDots();
               this.bindEvents();
-              this.updateSlider();
-
-              // Handle window resize
-              window.addEventListener("resize", () => {
-                this.handleResize();
-              });
+              this.updateDots();
+          
+              window.addEventListener("resize", () => this.handleResize());
             }
-
+          
             createInfiniteLoop() {
-              // Clear existing cards
               this.slider.innerHTML = "";
-
-              // Create enough clones for smooth infinite loop
-              const totalClones = this.cardsPerView; // Show current + next + prev sets
-              const clonedCards = [];
-
-              // Create clones by repeating the original cards
-              for (let i = 0; i < totalClones; i++) {
-                const cardIndex = i % this.totalCards;
-                const clonedCard =
-                  this.originalCards[cardIndex].cloneNode(true);
-                clonedCards.push(clonedCard);
-                this.slider.appendChild(clonedCard);
-              }
-
-              // Set initial position to show the "first" set (which is actually the middle set)
-              this.currentSlide = this.cardsPerView;
-              this.slider.style.transform = `translateX(-${
-                (100 / this.cardsPerView) * this.currentSlide
-              }%)`;
+          
+              // Clone head & tail for infinite loop
+              this.clonesBefore = this.originalCards.slice(-this.cardsPerView).map(card => card.cloneNode(true));
+              this.clonesAfter = this.originalCards.slice(0, this.cardsPerView).map(card => card.cloneNode(true));
+          
+              [...this.clonesBefore, ...this.originalCards, ...this.clonesAfter].forEach(card => {
+                this.slider.appendChild(card);
+              });
+          
+              this.totalSliderCards = this.slider.children.length;
+              this.slider.style.transition = "transform 0.5s ease";
+              this.updateSliderPosition();
             }
-
+          
             createDots() {
               this.dotsContainer.innerHTML = "";
-
-              // Create dots based on original cards, not clones
               for (let i = 0; i < this.totalCards; i++) {
                 const dot = document.createElement("div");
                 dot.classList.add("dot");
@@ -114,148 +98,93 @@
                 this.dotsContainer.appendChild(dot);
               }
             }
-
+          
             bindEvents() {
-              this.prevBtn.addEventListener("click", () =>
-                this.previousSlide()
-              );
+              this.prevBtn.addEventListener("click", () => this.previousSlide());
               this.nextBtn.addEventListener("click", () => this.nextSlide());
-
-              // Touch/swipe support
+          
               let startX = 0;
-              let endX = 0;
-
-              this.slider.addEventListener("touchstart", (e) => {
-                startX = e.touches[0].clientX;
+              this.slider.addEventListener("touchstart", e => startX = e.touches[0].clientX);
+              this.slider.addEventListener("touchend", e => {
+                const diff = startX - e.changedTouches[0].clientX;
+                if (Math.abs(diff) > 50) diff > 0 ? this.nextSlide() : this.previousSlide();
               });
-
-              this.slider.addEventListener("touchend", (e) => {
-                endX = e.changedTouches[0].clientX;
-                this.handleSwipe(startX, endX);
-              });
-
-              // Listen for transition end to handle infinite loop reset
-              this.slider.addEventListener("transitionend", () => {
-                this.handleInfiniteLoop();
-              });
+          
+              this.slider.addEventListener("transitionend", () => this.handleInfiniteLoop());
             }
-
-            handleSwipe(startX, endX) {
-              const difference = startX - endX;
-              const threshold = 50;
-
-              if (Math.abs(difference) > threshold && !this.isTransitioning) {
-                if (difference > 0) {
-                  this.nextSlide();
-                } else {
-                  this.previousSlide();
-                }
-              }
-            }
-
+          
             nextSlide() {
               if (this.isTransitioning) return;
-
               this.isTransitioning = true;
               this.currentSlide++;
               this.updateSliderPosition();
-              this.updateDots("next");
+              this.updateDots();
             }
-
+          
             previousSlide() {
               if (this.isTransitioning) return;
-
               this.isTransitioning = true;
               this.currentSlide--;
               this.updateSliderPosition();
-              this.updateDots("prev");
+              this.updateDots();
             }
-
-            goToSlide(slideIndex) {
+          
+            goToSlide(index) {
               if (this.isTransitioning) return;
-
               this.isTransitioning = true;
-              // Calculate the closest clone of the target slide
-              const currentLogicalSlide =
-                (this.currentSlide - this.cardsPerView) % this.totalCards;
-              const targetSlide = slideIndex;
-              const diff = targetSlide - currentLogicalSlide;
-
-              this.currentSlide += diff;
+              this.currentSlide = index + this.cardsPerView;
               this.updateSliderPosition();
-              this.updateDots("direct", slideIndex);
+              this.updateDots();
             }
-
+          
             updateSliderPosition() {
-              const translateX = -(
-                (100 / this.cardsPerView) *
-                this.currentSlide
-              );
+              const translateX = -(100 / this.cardsPerView) * this.currentSlide;
               this.slider.style.transform = `translateX(${translateX}%)`;
             }
-
-            updateDots(direction, targetIndex = null) {
-              const dots = this.dotsContainer.querySelectorAll(".dot");
-              let activeIndex;
-
-              if (targetIndex !== null) {
-                activeIndex = targetIndex;
-              } else {
-                // Calculate logical position based on original cards
-                const logicalSlide =
-                  (this.currentSlide - this.cardsPerView) % this.totalCards;
-                activeIndex =
-                  logicalSlide < 0
-                    ? this.totalCards + logicalSlide
-                    : logicalSlide;
-              }
-
-              dots.forEach((dot, index) => {
-                dot.classList.toggle("active", index === activeIndex);
+          
+            updateDots() {
+              const logicalIndex = (this.currentSlide - this.cardsPerView) % this.totalCards;
+              const activeIndex = logicalIndex < 0 ? this.totalCards + logicalIndex : logicalIndex;
+              this.dotsContainer.querySelectorAll(".dot").forEach((dot, i) => {
+                dot.classList.toggle("active", i === activeIndex);
               });
             }
-
+          
             handleInfiniteLoop() {
               this.isTransitioning = false;
-
-              // Check if we need to reset position for infinite loop
-              const totalClones = this.cardsPerView ;
-
-              if (this.currentSlide >= totalClones - this.cardsPerView) {
-                // We're at the end, jump back to the beginning (without animation)
+          
+              const firstReal = this.cardsPerView;
+              const lastReal = this.totalCards + this.cardsPerView - 1;
+          
+              if (this.currentSlide > lastReal) {
                 this.slider.style.transition = "none";
-                this.currentSlide = this.cardsPerView;
+                this.currentSlide = firstReal;
                 this.updateSliderPosition();
-                // Force reflow and restore transition
                 this.slider.offsetHeight;
                 this.slider.style.transition = "transform 0.5s ease";
-              } else if (this.currentSlide <= 0) {
-                // We're at the beginning, jump to the end (without animation)
+              } else if (this.currentSlide < firstReal) {
                 this.slider.style.transition = "none";
-                this.currentSlide = totalClones - this.cardsPerView * 2;
+                this.currentSlide = lastReal;
                 this.updateSliderPosition();
-                // Force reflow and restore transition
                 this.slider.offsetHeight;
                 this.slider.style.transition = "transform 0.5s ease";
               }
             }
-
+          
             handleResize() {
-              const oldCardsPerView = this.cardsPerView;
+              const old = this.cardsPerView;
               this.cardsPerView = this.getCardsPerView();
-
-              if (oldCardsPerView !== this.cardsPerView) {
-                // Recreate infinite loop with new cards per view
+              if (old !== this.cardsPerView) {
+                this.currentSlide = this.cardsPerView;
                 this.createInfiniteLoop();
                 this.createDots();
-                this.updateSlider();
+                this.updateDots();
               }
             }
-
-            updateSlider() {
-              this.updateDots("direct", 0);
-            }
           }
+          
+          document.addEventListener("DOMContentLoaded", () => new ServicesSlider());
+          
 
        
 
