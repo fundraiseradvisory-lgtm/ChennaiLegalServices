@@ -2137,6 +2137,7 @@ nav a:hover::after {
   padding: 80px 30px;
   background: #121212;
   color: white;
+  overflow:hidden;
 }
 
 .contactlux-left {
