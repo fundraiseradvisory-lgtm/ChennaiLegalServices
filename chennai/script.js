@@ -1,7 +1,8 @@
 
           // Typewriter effect for hero title
           const titles = [
-            "Elite Legal Representation",
+         "CIArb Accredited Arbitrator & Arbitration Lawyer",
+
             "Your Justice, My Mission",
             "Trusted Criminal & Civil Lawyer",
             "Expert in Legal Advisory",
