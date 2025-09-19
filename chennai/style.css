@@ -2220,3 +2220,30 @@ nav a:hover::after {
     margin: 0 8px;
   }
 }
+
+/* Dark Theme Embed Section */
+/* Dark Theme Embed Section */
+.embed-section {
+  background: #000;
+  margin: 0;
+  padding: 0;
+}
+
+.embed-section iframe {
+  width: 100%;
+  border: none;
+  display: block;
+  background: #000;
+  min-height: 600px;
+  vertical-align: bottom; /* Optional: Use this if 'display: block' alone doesn't work */
+}
+
+
+
+/* Updated Embed Section with auto-resize */
+.embed-section iframe {
+  width: 100%;
+  border: none;
+  display: block;
+  min-height: 600px; /* fallback */
+}
