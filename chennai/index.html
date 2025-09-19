@@ -100,7 +100,31 @@
       </div>
 
      
-    </section>
+    
+</section> <!-- end hero -->
+
+<!-- Full-width Embed Section -->
+<section class="embed-section" style="background:#000; margin:0; padding:0;">
+  <iframe 
+    id="sk-embed"
+    src="https://widgets.sociablekit.com/google-business-posts/iframe/25601203"
+    frameborder="0"
+    width="100%"
+    style="border:none; display:block; min-height:600px; background:#000;"
+  ></iframe>
+</section>
+
+<script>
+  window.addEventListener("message", function(event) {
+    if (event.data && event.data.type === "embed-height") {
+      var iframe = document.getElementById("sk-embed");
+      if (iframe) {
+        iframe.style.height = event.data.height + "px";
+      }
+    }
+  });
+</script>
+
 
     <!-- Call to Action Section -->
     <section class="cta-section">
@@ -680,51 +704,13 @@
             <div class="section-subtitle">Client Reviews</div>
             <h2 class="section-title">What Our Clients Say</h2>
             <p class="section-description">
-              Read testimonialsbp from our satisfied clients who trusted us with
+              Read testimonials from our satisfied clients who trusted us with
               their legal matters and achieved successful outcomes.
             </p>
           </div>
           
-          <div class="testimonialbc-sliderbp">
-            <div class="testimonialbc-container" id="testimonialContainer">
-           
-              <div class="testimonialbc-slide">
-                <div class="testimonialbc-card">
-                  <div class="testimonialbc-text">
-<img src="images/s2.png" alt="" width="400px">
-                  </div>
-                
-                </div>
-              </div>
-              <div class="testimonialbc-slide">
-                <div class="testimonialbc-card">
-                  <div class="testimonialbc-text">
-<img src="images/s1.png" alt="" width="400px">
-                  </div>
-                
-                </div>
-              </div>
-              <div class="testimonialbc-slide">
-                <div class="testimonialbc-card">
-                  <div class="testimonialbc-text">
-<img src="images/s3.png" alt="" width="400px">
-                  </div>
-                
-                </div>
-              </div>
-              <div class="testimonialbc-slide">
-                <div class="testimonialbc-card">
-                  <div class="testimonialbc-text">
-<img src="images/s3.png" alt="" width="400px">
-                  </div>
-            </div>
-          
-          </div>
-          </div>
+          <iframe src='https://widgets.sociablekit.com/google-reviews/iframe/25601302' frameborder='0' width='100%' height='500'></iframe>
           </section> 
-          
-          
-          
           <footer class="footer">
           <div class="footer-content">
             <!-- Company Info -->
