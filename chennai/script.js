@@ -19,6 +19,8 @@
           const typewriter = document.getElementById("typewriter");
 
           function type() {
+            if (!typewriter) return; // Prevent error if hero section isn't on this page
+            
             const currentText = titles[index];
             if (isDeleting) {
               typewriter.textContent = currentText.substring(0, charIndex--);
@@ -41,12 +43,16 @@
           }
 
           document.addEventListener("DOMContentLoaded", () => {
-            setTimeout(type, 600);
+            if (typewriter) {
+              setTimeout(type, 600);
+            }
           });
 
           class ServicesSlider {
             constructor() {
               this.slider = document.getElementById("servicesSlider");
+              if (!this.slider) return; // Exit if not on services page
+              
               this.prevBtn = document.getElementById("prevBtn");
               this.nextBtn = document.getElementById("nextBtn");
               this.dotsContainer = document.getElementById("sliderDots");
@@ -202,12 +208,30 @@
             }
           });
 
-          // Smooth scrolling for anchor links
+          // Active Link Highlighting
+          document.addEventListener("DOMContentLoaded", () => {
+             const navLinks = document.querySelectorAll('nav a');
+             const currentPath = window.location.pathname.split('/').pop() || 'index.html'; // default to index.html if empty
+
+             navLinks.forEach(link => {
+                // If the link's href matches the current page name, mark it active
+                // Also handle #home for backwards compat or specific index sections if any
+                const linkHref = link.getAttribute('href');
+                if (linkHref === currentPath) {
+                    link.style.color = 'var(--accent-color)';
+                }
+             });
+          });
+
+          // Smooth scrolling for anchor links (if any stay on the same page)
           document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
             anchor.addEventListener("click", function (e) {
-              e.preventDefault();
-              const target = document.querySelector(this.getAttribute("href"));
+              const targetId = this.getAttribute("href");
+              if(targetId === "#") return; // ignore empty links
+              
+              const target = document.querySelector(targetId);
               if (target) {
+                e.preventDefault();
                 target.scrollIntoView({
                   behavior: "smooth",
                   block: "start",
@@ -255,6 +279,8 @@
           class TestimonialSlider {
             constructor() {
               this.container = document.getElementById("testimonialContainer");
+              if (!this.container) return; // Exit if not on testimonials page
+              
               this.slides = document.querySelectorAll(".testimonialbc-slide");
               this.totalSlides = this.slides.length;
               this.currentIndex = 0;

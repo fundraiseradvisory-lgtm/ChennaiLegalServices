@@ -1,6 +1,8 @@
 class TestimonialSlider {
     constructor() {
       this.container = document.getElementById("testimonialContainer");
+      if (!this.container) return; // Exit if not on testimonials page
+      
       this.slides = document.querySelectorAll(".testimonialbc-slide");
       this.totalSlides = this.slides.length;
       this.currentIndex = 0;
