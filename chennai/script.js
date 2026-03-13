@@ -507,20 +507,10 @@
           
           // Footer interaction enhancements
           document.addEventListener("DOMContentLoaded", () => {
-            const footerLinks = document.querySelectorAll(
-              ".footer-links a, .footer-bottom-links a"
-            );
-            footerLinks.forEach((link) => {
-              link.addEventListener("click", (e) => {
-                e.preventDefault();
-                // Add smooth scroll logic here if needed
-              });
-            });
-          
             const socialLinks = document.querySelectorAll(".social-link");
             socialLinks.forEach((link) => {
               link.addEventListener("click", (e) => {
-                e.preventDefault();
+                // Add analytics logic here if needed, but do not prevent default
                 console.log("Social link clicked:", link.getAttribute("aria-label"));
               });
             });

@@ -251,22 +251,10 @@ class TestimonialSlider {
     
     // Footer interactions
     document.addEventListener("DOMContentLoaded", () => {
-    // Smooth scroll for footer links
-    const footerLinks = document.querySelectorAll(
-      ".footer-links a, .footer-bottom-links a"
-    );
-    footerLinks.forEach((link) => {
-      link.addEventListener("click", (e) => {
-        e.preventDefault();
-        // Add smooth scroll behavior here if needed
-      });
-    });
-    
     // Social media link tracking
     const socialLinks = document.querySelectorAll(".social-link");
     socialLinks.forEach((link) => {
       link.addEventListener("click", (e) => {
-        e.preventDefault();
         // Add analytics tracking here if needed
         console.log(
           "Social link clicked:",
